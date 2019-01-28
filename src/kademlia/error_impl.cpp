@@ -23,11 +23,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "kademlia/error_impl.hpp"
+#include "error_impl.hpp"
 
 #include <string>
-
-#include <kademlia/detail/cxx11_macros.hpp>
 
 namespace kademlia {
 namespace detail {
@@ -42,7 +40,7 @@ struct kademlia_error_category : std::error_category
     char const*
     name
         ( void )
-        const CXX11_NOEXCEPT override
+        const noexcept override
     {
         return "kademlia";
     }
@@ -50,7 +48,7 @@ struct kademlia_error_category : std::error_category
     std::string
     message
         ( int condition )
-        const CXX11_NOEXCEPT override
+        const noexcept override
     {
         switch ( condition )
         {

@@ -40,9 +40,9 @@
 #include <boost/asio/buffer.hpp>
 #include <boost/asio/ip/udp.hpp>
 
-#include "kademlia/log.hpp"
-#include "kademlia/error_impl.hpp"
-#include "kademlia/message.hpp"
+#include "log.hpp"
+#include "error_impl.hpp"
+#include "message.hpp"
 
 namespace kademlia {
 namespace test {

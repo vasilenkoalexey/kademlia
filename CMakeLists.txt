@@ -24,89 +24,68 @@
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 cmake_minimum_required(VERSION 3.5)
 
-list(INSERT CMAKE_MODULE_PATH 0 "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+project(
+    kademlia
 
-project(kademlia)
+    VERSION
+        0.0.0
+    LANGUAGES
+        CXX)
 
-# C++11.
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    if (MSVC_VERSION LESS 1910) # 1910 -> VS 15.0
-        message(FATAL_ERROR "Current compiler does'nt support c++11 yet")
-    endif()
-    add_definitions(
-        -D_WIN32_WINNT=_WIN32_WINNT_WIN7
-        -D_WINSOCK_DEPRECATED_NO_WARNINGS
-    )
-    if(ENABLE_COVERAGE)
-        message(FATAL_ERROR "Can't generate coverage report on MSVC yet")
-    endif()
-else()
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -stdlib=libc++")
-    endif()
+set_property(
+    DIRECTORY
+    APPEND
+    PROPERTY
+        COMPILE_DEFINITIONS
+            PACKAGE_VERSION="${PROJECT_VERSION}"
+            PACKAGE_BUGREPORT="David Keller <david.keller@litchis.fr>"
+            $<$<CONFIG:Debug>:KADEMLIA_ENABLE_DEBUG>)
 
-    include(CheckCXXCompilerFlag)
-    check_cxx_compiler_flag(-std=c++11 IS_CXX11_SUPPORTED)
-    if(NOT IS_CXX11_SUPPORTED)
-        message(FATAL_ERROR "Current compiler does'nt support c++11 yet")
-    endif()
-    set(CMAKE_CXX_FLAGS "-Wall -std=c++11 -fvisibility=hidden ${CMAKE_CXX_FLAGS}")
-endif()
+find_package(
+    Threads
 
-# Coverage
-option(ENABLE_COVERAGE "Enable coverage target")
-if(ENABLE_COVERAGE)
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-        set(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} --coverage")
-    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
-        set(CMAKE_EXEC_LINKER_FLAGS "${CMAKE_EXEC_LINKER_FLAGS} --coverage")
-    else()
-        message(FATAL_ERROR "Can't generate coverage target on ${CMAKE_CXX_COMPILER_ID}")
-    endif()
-endif()
+    REQUIRED)
 
-# Threads
-find_package(Threads REQUIRED)
+set(Boost_USE_STATIC_LIBS "${WIN32}")
+find_package(
+    Boost
 
-# Boost
-if(WIN32)
-    set(Boost_USE_STATIC_LIBS ON)
-endif()
-find_package(Boost REQUIRED COMPONENTS
-    system
-    filesystem
-    unit_test_framework)
+    REQUIRED
+    COMPONENTS
+        system
+        filesystem
+        unit_test_framework)
 
-# Crypto
-find_package(OpenSSL REQUIRED)
+set_property(
+    DIRECTORY
+    APPEND
+    PROPERTY
+        COMPILE_DEFINITIONS
+            $<$<NOT:$<BOOL:${Boost_USE_STATIC_LIBS}>>:BOOST_ALL_DYN_LINK>
+            BOOST_ASIO_HAS_MOVE
+            BOOST_ASIO_HAS_VARIADIC_TEMPLATES
+            BOOST_ASIO_HAS_STD_SYSTEM_ERROR
+            BOOST_ASIO_HAS_STD_ARRAY
+            BOOST_ASIO_HAS_STD_SHARED_PTR
+            BOOST_ASIO_HAS_STD_ATOMIC
+            BOOST_ASIO_HAS_STD_CHRONO)
 
-# Setup C++ definitions.
-add_definitions(-DPACKAGE_VERSION="0.0.0")
-add_definitions(-DPACKAGE_BUGREPORT="david.keller@litchis.fr")
-add_definitions(-DBOOST_ALL_NO_LIB
-    -DBOOST_ASIO_HAS_MOVE
-    -DBOOST_ASIO_HAS_VARIADIC_TEMPLATES
-    -DBOOST_ASIO_HAS_STD_SYSTEM_ERROR
-    -DBOOST_ASIO_HAS_STD_ARRAY
-    -DBOOST_ASIO_HAS_STD_SHARED_PTR
-    -DBOOST_ASIO_HAS_STD_ATOMIC
-    -DBOOST_ASIO_HAS_STD_CHRONO)
-if(NOT Boost_USE_STATIC_LIBS)
-    add_definitions(-DBOOST_ALL_DYN_LINK)
-endif()
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    add_definitions(-DKADEMLIA_ENABLE_DEBUG)
-endif()
+find_package(
+    OpenSSL
 
-# Setup includes directories.
-include_directories(BEFORE include src test)
-include_directories(${Boost_INCLUDE_DIRS} ${OPENSSL_INCLUDE_DIR})
+    REQUIRED)
 
-# Build everything.
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+set_property(
+    DIRECTORY PROPERTY
+        COMPILE_OPTIONS
+            -Wall)
+
 add_subdirectory(include)
 add_subdirectory(src)
+
 enable_testing()
 add_subdirectory(test)
 

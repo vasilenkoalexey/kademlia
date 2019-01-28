@@ -26,9 +26,9 @@
 #include "common.hpp"
 
 #include <vector>
-#include "kademlia/error_impl.hpp"
+#include "error_impl.hpp"
 
-#include "kademlia/response_callbacks.hpp"
+#include "response_callbacks.hpp"
 
 namespace {
 

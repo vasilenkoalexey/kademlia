@@ -36,7 +36,6 @@
 #include <sstream>
 
 #include <kademlia/detail/symbol_visibility.hpp>
-#include <kademlia/detail/cxx11_macros.hpp>
 
 namespace kademlia {
 

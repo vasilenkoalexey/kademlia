@@ -22,13 +22,14 @@
 # ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 # (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 # SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+add_library(
+    kademlia
 
-set(kademlia_sources
-    ${CMAKE_SOURCE_DIR}/include/kademlia/endpoint.hpp
-    ${CMAKE_SOURCE_DIR}/include/kademlia/error.hpp
-    ${CMAKE_SOURCE_DIR}/include/kademlia/session_base.hpp
-    ${CMAKE_SOURCE_DIR}/include/kademlia/first_session.hpp
-    ${CMAKE_SOURCE_DIR}/include/kademlia/session.hpp
+    ${PROJECT_SOURCE_DIR}/include/kademlia/endpoint.hpp
+    ${PROJECT_SOURCE_DIR}/include/kademlia/error.hpp
+    ${PROJECT_SOURCE_DIR}/include/kademlia/session_base.hpp
+    ${PROJECT_SOURCE_DIR}/include/kademlia/first_session.hpp
+    ${PROJECT_SOURCE_DIR}/include/kademlia/session.hpp
     session_impl.hpp
     boost_to_std_error.hpp
     buffer.hpp
@@ -70,30 +71,52 @@ set(kademlia_sources
     value_store.hpp
     lookup_task.hpp)
 
-# Kademlia shared
-add_library(kademlia SHARED
-    ${kademlia_sources})
+target_compile_features(
+    kademlia
 
-set_target_properties(kademlia
+    PUBLIC
+        cxx_deleted_functions
+        cxx_final
+        cxx_right_angle_brackets
+    PRIVATE
+        cxx_auto_type
+        cxx_defaulted_functions
+        cxx_nullptr
+        cxx_noexcept)
+
+target_include_directories(
+    kademlia
+
+    PUBLIC
+        $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<INSTALL_INTERFACE:include>
+    PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR})
+
+target_compile_definitions(
+    kademlia
+
+    PUBLIC
+        $<$<BOOL:${BUILD_SHARED_LIBS}>:KADEMLIA_AS_SHARED>
+    PRIVATE
+        $<$<BOOL:${BUILD_SHARED_LIBS}>:KADEMLIA_BUILDING_AS_SHARED>)
+
+set_target_properties(
+    kademlia
+
     PROPERTIES
-        MACOSX_RPATH ON
-        COMPILE_DEFINITIONS "KADEMLIA_BUILDING_AS_SHARED;KADEMLIA_AS_SHARED")
+        MACOSX_RPATH
+            "${BUILD_SHARED_LIBS}"
+        CXX_VISIBILITY_PRESET
+            hidden
+        VERSION
+            "${PROJECT_VERSION}")
 
-target_link_libraries(kademlia
-    ${Boost_SYSTEM_LIBRARY}
-    ${OPENSSL_CRYPTO_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT})
+target_link_libraries(
+    kademlia
 
-# Kademlia static
-add_library(kademlia_static STATIC
-    ${kademlia_sources})
-
-target_link_libraries(kademlia_static
-    ${Boost_SYSTEM_LIBRARY}
-    ${OPENSSL_CRYPTO_LIBRARY}
-    ${CMAKE_THREAD_LIBS_INIT})
-
-set_target_properties(kademlia_static
-    PROPERTIES
-        POSITION_INDEPENDENT_CODE ON)
-
+    PRIVATE
+        ${CMAKE_THREAD_LIBS_INIT}
+        Boost::boost
+        Boost::system
+        OpenSSL::Crypto)

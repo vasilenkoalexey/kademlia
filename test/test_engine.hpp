@@ -30,9 +30,9 @@
 #include <kademlia/session_base.hpp>
 #include <kademlia/endpoint.hpp>
 
-#include "kademlia/log.hpp"
-#include "kademlia/buffer.hpp"
-#include "kademlia/engine.hpp"
+#include "log.hpp"
+#include "buffer.hpp"
+#include "engine.hpp"
 
 #include "fake_socket.hpp"
 

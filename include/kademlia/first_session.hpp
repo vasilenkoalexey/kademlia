@@ -34,7 +34,6 @@
 #include <system_error>
 
 #include <kademlia/detail/symbol_visibility.hpp>
-#include <kademlia/detail/cxx11_macros.hpp>
 #include <kademlia/endpoint.hpp>
 #include <kademlia/session_base.hpp>
 

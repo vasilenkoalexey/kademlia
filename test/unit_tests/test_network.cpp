@@ -23,10 +23,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 // SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-#include "kademlia/network.hpp"
+#include "network.hpp"
 
 #include <kademlia/endpoint.hpp>
 
+#include "message_socket.hpp"
 #include "common.hpp"
 #include "socket_mock.hpp"
 
