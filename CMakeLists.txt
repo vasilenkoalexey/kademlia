@@ -86,6 +86,9 @@ set_property(
 add_subdirectory(include)
 add_subdirectory(src)
 
-enable_testing()
-add_subdirectory(test)
+include(CTest)
+if(BUILD_TESTING)
+    enable_testing()
 
+    add_subdirectory(test)
+endif()

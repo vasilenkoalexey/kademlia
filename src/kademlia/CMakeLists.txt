@@ -107,8 +107,8 @@ set_target_properties(
     PROPERTIES
         MACOSX_RPATH
             "${BUILD_SHARED_LIBS}"
-        CXX_VISIBILITY_PRESET
-            hidden
+#        CXX_VISIBILITY_PRESET
+#            hidden
         VERSION
             "${PROJECT_VERSION}")
 

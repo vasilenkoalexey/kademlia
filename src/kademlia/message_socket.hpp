@@ -290,7 +290,7 @@ message_socket< UnderlyingSocketType >::async_send
     else {
         // Copy the buffer as it has to live past the end of this call.
         auto message_copy = std::make_shared< buffer >( message );
-        auto on_completion = [ this, callback, message_copy ]
+        auto on_completion = [ callback, message_copy ]
             ( boost::system::error_code const& failure
             , std::size_t /* bytes_sent */ )
         {
