@@ -14,7 +14,7 @@ before_script:
     - gem install coveralls-lcov
 
 script:
-    - scripts/linux_coverage.sh
+    - mkdir build-coverage && cd build-coverage && ../scripts/linux_coverage.sh
 
 after_success:
     # Upload coverage report to coveralls.
